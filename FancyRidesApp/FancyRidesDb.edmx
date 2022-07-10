@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="FancyRidesModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="FancyRidesRecord">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerName" Type="nvarchar" MaxLength="50" />
+          <Property Name="DateRented" Type="datetime" />
+          <Property Name="DateReturned" Type="datetime" />
+          <Property Name="Cost" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="TypeOfCarId" Type="int" />
+        </EntityType>
+        <EntityType Name="TypesOfCars">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Make" Type="nvarchar" MaxLength="50" />
+          <Property Name="Model" Type="nvarchar" MaxLength="50" />
+          <Property Name="VIN" Type="nvarchar" MaxLength="50" />
+          <Property Name="LicensePlateNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="Year" Type="int" />
+        </EntityType>
+        <Association Name="FK_FancyRidesRecord_TypesOfCars">
+          <End Role="TypesOfCars" Type="Self.TypesOfCars" Multiplicity="0..1" />
+          <End Role="FancyRidesRecord" Type="Self.FancyRidesRecord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TypesOfCars">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="FancyRidesRecord">
+              <PropertyRef Name="TypeOfCarId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="FancyRidesModelStoreContainer">
+          <EntitySet Name="FancyRidesRecord" EntityType="Self.FancyRidesRecord" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TypesOfCars" EntityType="Self.TypesOfCars" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_FancyRidesRecord_TypesOfCars" Association="Self.FK_FancyRidesRecord_TypesOfCars">
+            <End Role="TypesOfCars" EntitySet="TypesOfCars" />
+            <End Role="FancyRidesRecord" EntitySet="FancyRidesRecord" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="FancyRidesModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="FancyRidesEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="FancyRidesRecords" EntityType="FancyRidesModel.FancyRidesRecord" />
+          <EntitySet Name="TypesOfCars" EntityType="FancyRidesModel.TypesOfCar" />
+          <AssociationSet Name="FK_FancyRidesRecord_TypesOfCars" Association="FancyRidesModel.FK_FancyRidesRecord_TypesOfCars">
+            <End Role="TypesOfCar" EntitySet="TypesOfCars" />
+            <End Role="FancyRidesRecord" EntitySet="FancyRidesRecords" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="FancyRidesRecord">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DateRented" Type="DateTime" Precision="3" />
+          <Property Name="DateReturned" Type="DateTime" Precision="3" />
+          <Property Name="Cost" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="TypeOfCarId" Type="Int32" />
+          <NavigationProperty Name="TypesOfCar" Relationship="FancyRidesModel.FK_FancyRidesRecord_TypesOfCars" FromRole="FancyRidesRecord" ToRole="TypesOfCar" />
+        </EntityType>
+        <EntityType Name="TypesOfCar">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Make" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="VIN" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LicensePlateNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Year" Type="Int32" />
+          <NavigationProperty Name="FancyRidesRecords" Relationship="FancyRidesModel.FK_FancyRidesRecord_TypesOfCars" FromRole="TypesOfCar" ToRole="FancyRidesRecord" />
+        </EntityType>
+        <Association Name="FK_FancyRidesRecord_TypesOfCars">
+          <End Type="FancyRidesModel.TypesOfCar" Role="TypesOfCar" Multiplicity="0..1" />
+          <End Type="FancyRidesModel.FancyRidesRecord" Role="FancyRidesRecord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TypesOfCar">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="FancyRidesRecord">
+              <PropertyRef Name="TypeOfCarId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="FancyRidesModelStoreContainer" CdmEntityContainer="FancyRidesEntities">
+          <EntitySetMapping Name="FancyRidesRecords">
+            <EntityTypeMapping TypeName="FancyRidesModel.FancyRidesRecord">
+              <MappingFragment StoreEntitySet="FancyRidesRecord">
+                <ScalarProperty Name="TypeOfCarId" ColumnName="TypeOfCarId" />
+                <ScalarProperty Name="Cost" ColumnName="Cost" />
+                <ScalarProperty Name="DateReturned" ColumnName="DateReturned" />
+                <ScalarProperty Name="DateRented" ColumnName="DateRented" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TypesOfCars">
+            <EntityTypeMapping TypeName="FancyRidesModel.TypesOfCar">
+              <MappingFragment StoreEntitySet="TypesOfCars">
+                <ScalarProperty Name="Year" ColumnName="Year" />
+                <ScalarProperty Name="LicensePlateNumber" ColumnName="LicensePlateNumber" />
+                <ScalarProperty Name="VIN" ColumnName="VIN" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="Make" ColumnName="Make" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
