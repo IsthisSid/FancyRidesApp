@@ -48,7 +48,7 @@ namespace FancyRidesApp
 
         private void btnAddCar_Click(object sender, EventArgs e)
             {
-                var addEditVehicle = new AddEditVehicle();
+                var addEditVehicle = new AddEditVehicle(this);
                 addEditVehicle.MdiParent = this.MdiParent;
                 addEditVehicle.Show();
             }
@@ -65,7 +65,7 @@ namespace FancyRidesApp
                 var car = fancyRidesEntities.TypesOfCars.FirstOrDefault(q => q.ID == id);
 
                 //Launch AddEditVehicle window with data
-                var addEditVehicle = new AddEditVehicle(car);
+                var addEditVehicle = new AddEditVehicle(car, this);
                 addEditVehicle.MdiParent = this.MdiParent;
                 addEditVehicle.Show();
             }
@@ -86,11 +86,17 @@ namespace FancyRidesApp
                 // Query database for record
                 var car = fancyRidesEntities.TypesOfCars.FirstOrDefault(q => q.ID == id);
 
-                // Delete vehicle from the table
-                fancyRidesEntities.TypesOfCars.Remove(car);
-                fancyRidesEntities.SaveChanges();
-
-                gvVehicleList.Refresh();
+                DialogResult dr = MessageBox.Show("Are you sure you want to delete this entry?",
+                    "Delete", MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Warning);
+                if (dr == DialogResult.Yes)
+                {
+                    // Delete vehicle from the table
+                    fancyRidesEntities.TypesOfCars.Remove(car);
+                    fancyRidesEntities.SaveChanges();
+                }
+                PopulateGrid();
+                //gvVehicleList.Refresh(); - no need for Refresh since we coded for automatic refresh; keeping for reference
             }
             catch (Exception ex)
             {
@@ -105,7 +111,8 @@ namespace FancyRidesApp
             }
 
 
-        private void PopulateGrid()
+        //Made public to enable use of PopulateGrid function that triggers refresh of the grid
+        public void PopulateGrid()
             {
                 // Select a custom model collection of cars from database
                 var cars = fancyRidesEntities.TypesOfCars

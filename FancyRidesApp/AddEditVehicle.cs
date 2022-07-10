@@ -11,27 +11,33 @@ using System.Windows.Forms;
 namespace FancyRidesApp
 {
     public partial class AddEditVehicle : Form
+
     {
         private bool isEditMode;
+        private ManageVehicleListing _manageVehicleListing;
+
+
         private readonly FancyRidesEntities fancyRidesEntities;
 
-        
-        public AddEditVehicle()
+        public AddEditVehicle(ManageVehicleListing manageVehicleListing = null)
         {
             InitializeComponent();
             Text = "Add Vehicle";
             lblTitle.Text = "Add Vehicle";
             isEditMode = false;
+            _manageVehicleListing = manageVehicleListing;
             fancyRidesEntities = new FancyRidesEntities();
+            
         }
 
-        public AddEditVehicle(TypesOfCar carToEdit)
+        public AddEditVehicle(TypesOfCar carToEdit, ManageVehicleListing manageVehicleListing = null)
         {
             InitializeComponent();
             Text = "Edit Vehicle";
             lblTitle.Text = "Edit Vehicle";
             PopulateFields(carToEdit);
             isEditMode = true;
+            _manageVehicleListing = manageVehicleListing;
             fancyRidesEntities = new FancyRidesEntities();
         }
 
@@ -60,49 +66,43 @@ namespace FancyRidesApp
                 //Form validation checks for invalid user responses
                 if (string.IsNullOrWhiteSpace(make) || string.IsNullOrWhiteSpace(model) || string.IsNullOrWhiteSpace(year))
                 {
-                    isValid = false;
-                    errorMessage += "Error: Please enter make, model, and year.\n\r"; // note '\n\r' is a line break in a string
-                }
-
-                //Message box popup once the user completes validation checks
-                if (isValid)
-                {
-                    MessageBox.Show("Operation successful. Click Refresh grid to see changes.\n\r");
+                    MessageBox.Show("Please provide the make, model and year.");
                 }
                 else
                 {
-                    MessageBox.Show(errorMessage);
-                }
+                    //Add/Edit functionality
 
-                //Add/Edit functionality
-                if (isEditMode)
-                {
-                    //Edit vehicle code here
-                    var id = int.Parse(lblId.Text);
-                    var car = fancyRidesEntities.TypesOfCars.FirstOrDefault(q => q.ID == id);
-                    car.Model = tbModel.Text;
-                    car.Make = tbModel.Text;
-                    car.VIN = tbVIN.Text;
-                    car.Year = int.Parse(tbYear.Text);
-                    car.LicensePlateNumber = tbLicensePlate.Text;
-
-                    fancyRidesEntities.SaveChanges();
-                }
-                else
-                {
-                    //Add vehicle code here
-                    var newCar = new TypesOfCar
+                    if (isEditMode)
                     {
-                        LicensePlateNumber = tbLicensePlate.Text,
-                        Make = tbMake.Text,
-                        Model = tbModel.Text,
-                        VIN = tbVIN.Text,
-                        Year = int.Parse(tbYear.Text)
+                        //Edit vehicle code here
+                        var id = int.Parse(lblId.Text);
+                        var car = fancyRidesEntities.TypesOfCars.FirstOrDefault(q => q.ID == id);
+                        car.Model = tbModel.Text;
+                        car.Make = tbModel.Text;
+                        car.VIN = tbVIN.Text;
+                        car.Year = int.Parse(tbYear.Text);
+                        car.LicensePlateNumber = tbLicensePlate.Text;
+                    }
+                    else
+                    {
+                        //Add vehicle code here
+                        var newCar = new TypesOfCar
+                        {
+                            LicensePlateNumber = tbLicensePlate.Text,
+                            Make = tbMake.Text,
+                            Model = tbModel.Text,
+                            VIN = tbVIN.Text,
+                            Year = int.Parse(tbYear.Text)
+                        };
 
-                    };
+                        fancyRidesEntities.TypesOfCars.Add(newCar);
+                    }
 
-                    fancyRidesEntities.TypesOfCars.Add(newCar);
+                    //At the end, we want to save changes, populate the grid, pop up a messagebox stating success, then close
                     fancyRidesEntities.SaveChanges();
+                    _manageVehicleListing.PopulateGrid();
+                    MessageBox.Show("Operation successful.\n\r");
+                    Close();
                 }
             }
             catch (Exception ex)
